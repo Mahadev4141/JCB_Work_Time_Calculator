@@ -1,0 +1,118 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Manage Users</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+margin:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#198754;
+color:white;
+}
+
+h2{
+text-align:center;
+}
+
+a{
+padding:8px 15px;
+background:#198754;
+color:white;
+text-decoration:none;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="/">⬅ Back</a>
+
+<h2>👥 Manage Users</h2>
+<br>
+
+{% if request.user.groups.first.name == "Admin" %}
+<a href="/users/add/" class="btn btn-success">
+    ➕ Add User
+</a>
+{% endif %}
+
+<br><br>
+
+<br>
+
+<table>
+
+<tr>
+
+<th>ID</th>
+<th>Username</th>
+<th>Email</th>
+<th>Staff</th>
+<th>Superuser</th>
+<th>Action</th>
+
+</tr>
+
+{% for user in users %}
+
+<tr>
+
+<td>{{ user.id }}</td>
+<td>{{ user.username }}</td>
+<td>{{ user.email }}</td>
+<td>{{ user.is_staff }}</td>
+<td>{{ user.is_superuser }}</td>
+<td>
+
+{% if request.user.groups.first.name == "Admin" %}
+
+<a href="/users/edit/{{ user.id }}/">✏ Edit</a>
+
+<a href="/users/delete/{{ user.id }}/"
+   onclick="return confirm('Delete User?')">
+   🗑 Delete
+</a>
+
+<a href="/users/reset/{{ user.id }}/">
+   🔑 Reset Password
+</a>
+
+{% endif %}
+
+</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>
+{% endblock %}

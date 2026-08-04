@@ -1,0 +1,46 @@
+{% extends "calculator/base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2>About This Project</h2>
+        </div>
+        <div class="card-body">
+            <h4>Work Record Management System</h4>
+            <p>
+                This Django application helps users manage daily work records,
+                view history, generate PDF and Excel reports, and securely
+                manage their accounts.
+            </p>
+
+            <h5>Features</h5>
+            <ul>
+                <li>User Login & Logout</li>
+                <li>Add, Edit and Delete Work Records</li>
+                <li>Search Work History</li>
+                <li>Export Reports to PDF & Excel</li>
+                <li>Password Change</li>
+                <li>Responsive Bootstrap Interface</li>
+            </ul>
+
+            <h5>Technology Stack</h5>
+            <ul>
+                <li>Python</li>
+                <li>Django</li>
+                <li>Bootstrap</li>
+                <li>SQLite</li>
+            </ul>
+
+            <hr>
+
+            <p class="text-muted">
+                Version 1.0<br>
+                Developed using Django Framework.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

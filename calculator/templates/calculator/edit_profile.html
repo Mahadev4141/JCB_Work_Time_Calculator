@@ -1,0 +1,59 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+            <h3>✏️ Edit Profile</h3>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label>Username</label>
+
+                    <input type="text"
+                           name="username"
+                           class="form-control"
+                           value="{{ request.user.username }}"
+                           required>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>Email</label>
+
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           value="{{ request.user.email }}"
+                           required>
+
+                </div>
+
+                <button class="btn btn-success">
+                    💾 Save Changes
+                </button>
+
+                <a href="/profile/" class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

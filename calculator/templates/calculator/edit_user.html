@@ -1,0 +1,110 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Edit User</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+}
+
+.container{
+
+width:400px;
+
+margin:auto;
+
+margin-top:60px;
+
+background:white;
+
+padding:25px;
+
+border-radius:10px;
+
+box-shadow:0px 0px 10px lightgray;
+
+}
+
+input{
+
+width:100%;
+
+padding:10px;
+
+margin:10px 0;
+
+}
+
+button{
+
+padding:10px 20px;
+
+background:#198754;
+
+color:white;
+
+border:none;
+
+border-radius:5px;
+
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Edit User</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Username</label>
+
+<input
+type="text"
+name="username"
+value="{{ user.username }}"
+required>
+
+<label>Email</label>
+
+<input
+type="email"
+name="email"
+value="{{ user.email }}">
+
+<br><br>
+
+<button type="submit">
+
+💾 Update User
+
+</button>
+
+</form>
+
+<br>
+
+<a href="/users/">⬅ Back</a>
+
+</div>
+
+</body>
+
+</html>
+{% endblock %}

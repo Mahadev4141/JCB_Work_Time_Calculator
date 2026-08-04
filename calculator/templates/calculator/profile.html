@@ -1,0 +1,80 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+            <h3>👤 My Profile</h3>
+        </div>
+
+        <div class="card-body text-center">
+
+            <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=198754&color=fff&size=150"
+                 class="rounded-circle mb-3">
+
+            <h3>{{ user.username }}</h3>
+
+            <p class="text-muted">{{ user.email }}</p>
+
+            <hr>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <h5>Username</h5>
+
+                    <p>{{ user.username }}</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <h5>Role</h5>
+
+                    <p>{{ role }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-md-6">
+
+                    <h5>Date Joined</h5>
+
+                    <p>{{ user.date_joined|date:"d M Y" }}</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <h5>Last Login</h5>
+
+                    <p>{{ user.last_login|date:"d M Y H:i" }}</p>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <a href="/change-password/" class="btn btn-warning">
+                🔑 Change Password
+            </a>
+
+            <a href="/edit-profile/" class="btn btn-success">
+               ✏️ Edit Profile
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

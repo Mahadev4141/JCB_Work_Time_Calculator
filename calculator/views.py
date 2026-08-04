@@ -1,0 +1,587 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+from django.http import HttpResponse
+
+from .models import WorkRecord
+from .forms import RegisterForm
+
+from datetime import date
+import json
+import re
+
+from django.db.models import Count
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph
+)
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
+
+
+# ==========================================
+# LOGIN
+# ==========================================
+def login_user(request):
+
+    if request.method == "POST":
+
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+            login(request, user)
+            return redirect("/")
+
+        messages.error(request, "Invalid Username or Password")
+
+    return render(request, "calculator/login.html")
+
+
+# ==========================================
+# LOGOUT
+# ==========================================
+def logout_user(request):
+    logout(request)
+    return redirect("/login/")
+# ==========================================
+# HOME
+# ==========================================
+@login_required(login_url="/login/")
+def index(request):
+
+    if request.method == "POST":
+
+        work_date = request.POST.get("date")
+        operator = request.POST.get("operator")
+        machine = request.POST.get("machine")
+        site = request.POST.get("site")
+        start_time = request.POST.get("start_time")
+        end_time = request.POST.get("end_time")
+        total_time = request.POST.get("total_time")
+        break_time = request.POST.get("break_time")
+        working_time = request.POST.get("working_time")
+
+        WorkRecord.objects.create(
+            user=request.user,
+            date=work_date,
+            operator=operator,
+            machine=machine,
+            site=site,
+            start_time=start_time,
+            end_time=end_time,
+            total_time=total_time,
+            break_time=break_time,
+            working_time=working_time,
+        )
+
+        messages.success(request, "✅ Record Saved Successfully!")
+        return redirect("/")
+
+    return render(request, "calculator/index.html")
+
+
+import re
+
+@login_required(login_url="/login/")
+def history(request):
+
+    records = WorkRecord.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    search = request.GET.get("search", "").strip()
+    from_date = request.GET.get("from_date", "")
+    to_date = request.GET.get("to_date", "")
+
+    if search:
+        records = records.filter(operator__icontains=search)
+
+    if from_date:
+        records = records.filter(date__gte=from_date)
+
+    if to_date:
+        records = records.filter(date__lte=to_date)
+
+    # Total Records
+    total_records = records.count()
+
+    total_work_minutes = 0
+    total_break_minutes = 0
+
+    chart_labels = []
+    chart_data = []
+
+    for r in records:
+
+        m = re.findall(r"\d+", r.working_time)
+        if len(m) >= 2:
+            h = int(m[0])
+            mn = int(m[1])
+
+            total_work_minutes += h * 60 + mn
+
+            chart_labels.append(r.operator)
+            chart_data.append(round((h * 60 + mn) / 60, 2))
+
+        b = re.findall(r"\d+", r.break_time)
+        if len(b) >= 2:
+            bh = int(b[0])
+            bm = int(b[1])
+
+            total_break_minutes += bh * 60 + bm
+
+    context = {
+        "records": records,
+
+        "total_records": total_records,
+
+        "search": search,
+        "from_date": from_date,
+        "to_date": to_date,
+
+        "total_work_hours": total_work_minutes // 60,
+        "total_work_minutes": total_work_minutes % 60,
+
+        "total_break_hours": total_break_minutes // 60,
+        "total_break_minutes": total_break_minutes % 60,
+
+        "chart_labels": chart_labels,
+        "chart_data": chart_data,
+    }
+
+    return render(request, "calculator/history.html", context)
+# ==========================================
+# DELETE RECORD
+# ==========================================
+@login_required(login_url="/login/")
+def delete_record(request, id):
+
+    record = get_object_or_404(
+        WorkRecord,
+        id=id,
+        user=request.user
+    )
+
+    record.delete()
+
+    messages.success(request, "🗑 Record Deleted Successfully!")
+
+    return redirect("/history/")
+
+
+# ==========================================
+# EDIT RECORD
+# ==========================================
+@login_required(login_url="/login/")
+def edit_record(request, id):
+
+    record = get_object_or_404(
+        WorkRecord,
+        id=id,
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        record.date = request.POST.get("date")
+        record.operator = request.POST.get("operator")
+        record.machine = request.POST.get("machine")
+        record.site = request.POST.get("site")
+        record.start_time = request.POST.get("start_time")
+        record.end_time = request.POST.get("end_time")
+        record.total_time = request.POST.get("total_time")
+        record.break_time = request.POST.get("break_time")
+        record.working_time = request.POST.get("working_time")
+
+        record.save()
+
+        messages.success(request, "✅ Record Updated Successfully!")
+
+        return redirect("/history/")
+
+    return render(request, "calculator/edit.html", {
+        "record": record
+    })
+# ==========================================
+# EXPORT PDF
+# ==========================================
+@login_required(login_url="/login/")
+def export_pdf(request):
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="JCB_Work_Records.pdf"'
+
+    doc = SimpleDocTemplate(response)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(
+        Paragraph(
+            "<b>JCB Work Records</b>",
+            styles["Title"]
+        )
+    )
+
+    data = [[
+        "ID",
+        "Date",
+        "Operator",
+        "Machine",
+        "Site",
+        "Start",
+        "End",
+        "Total",
+        "Break",
+        "Working"
+    ]]
+
+    records = WorkRecord.objects.filter(
+        user=request.user
+    ).order_by("-id")
+
+    for record in records:
+
+        data.append([
+            record.id,
+            str(record.date),
+            record.operator,
+            record.machine,
+            record.site,
+            str(record.start_time),
+            str(record.end_time),
+            record.total_time,
+            record.break_time,
+            record.working_time,
+        ])
+
+    table = Table(data)
+
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,0), colors.green),
+        ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+        ("GRID", (0,0), (-1,-1), 1, colors.black),
+        ("ALIGN", (0,0), (-1,-1), "CENTER"),
+    ]))
+
+    elements.append(table)
+
+    doc.build(elements)
+
+    return response
+
+
+# ==========================================
+# EXPORT EXCEL
+# ==========================================
+@login_required(login_url="/login/")
+def export_excel(request):
+
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "JCB Work Records"
+
+    sheet.append([
+        "ID",
+        "Date",
+        "Operator",
+        "Machine",
+        "Site",
+        "Start",
+        "End",
+        "Total",
+        "Break",
+        "Working"
+    ])
+
+    for record in WorkRecord.objects.filter(user=request.user):
+
+        sheet.append([
+            record.id,
+            str(record.date),
+            record.operator,
+            record.machine,
+            record.site,
+            str(record.start_time),
+            str(record.end_time),
+            record.total_time,
+            record.break_time,
+            record.working_time,
+        ])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="JCB_Work_Records.xlsx"'
+    )
+
+    workbook.save(response)
+
+    return response
+
+
+# ==========================================
+# DASHBOARD
+# ==========================================
+@login_required(login_url="/login/")
+def dashboard(request):
+
+    records = WorkRecord.objects.filter(user=request.user)
+
+    total_records = records.count()
+
+    total_operators = (
+        records.values("operator")
+        .distinct()
+        .count()
+    )
+
+    total_machines = (
+        records.values("machine")
+        .distinct()
+        .count()
+    )
+
+    today_records = records.filter(
+        date=date.today()
+    ).count()
+
+    latest_records = records.order_by("-id")[:5]
+
+    chart = (
+        records.values("operator")
+        .annotate(total=Count("id"))
+        .order_by("operator")
+    )
+
+    labels = []
+    data = []
+
+    for item in chart:
+        labels.append(item["operator"])
+        data.append(item["total"])
+
+    context = {
+        "total_records": total_records,
+        "total_operators": total_operators,
+        "total_machines": total_machines,
+        "today_records": today_records,
+        "latest_records": latest_records,
+        "labels": json.dumps(labels),
+        "data": json.dumps(data),
+    }
+
+    return render(
+        request,
+        "calculator/dashboard.html",
+        context
+    )
+# ==========================================
+# USERS
+# ==========================================
+@login_required(login_url="/login/")
+def users(request):
+
+    users_list = User.objects.all().order_by("id")
+
+    return render(
+        request,
+        "calculator/users.html",
+        {
+            "users": users_list
+        }
+    )
+
+
+# ==========================================
+# ADD USER
+# ==========================================
+@login_required(login_url="/login/")
+def add_user(request):
+
+    if request.method == "POST":
+
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return redirect("/users/")
+
+        User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        messages.success(request, "User created successfully.")
+        return redirect("/users/")
+
+    return render(request, "calculator/add_user.html")
+
+
+# ==========================================
+# EDIT USER
+# ==========================================
+@login_required(login_url="/login/")
+def edit_user(request, id):
+
+    user = get_object_or_404(User, id=id)
+
+    if request.method == "POST":
+        user.username = request.POST.get("username")
+        user.email = request.POST.get("email")
+        user.save()
+
+        messages.success(request, "User updated successfully.")
+        return redirect("/users/")
+
+    return render(request, "calculator/edit_user.html", {"user": user})
+
+
+# ==========================================
+# DELETE USER
+# ==========================================
+@login_required(login_url="/login/")
+def delete_user(request, id):
+
+    user = get_object_or_404(User, id=id)
+    user.delete()
+
+    messages.success(request, "User deleted successfully.")
+    return redirect("/users/")
+
+
+# ==========================================
+# RESET PASSWORD
+# ==========================================
+@login_required(login_url="/login/")
+def reset_password(request, id):
+
+    user = get_object_or_404(User, id=id)
+
+    if request.method == "POST":
+        password = request.POST.get("password")
+        user.set_password(password)
+        user.save()
+
+        messages.success(request, "Password reset successfully.")
+        return redirect("/users/")
+
+    return render(request, "calculator/reset_password.html", {"user": user})
+
+
+# ==========================================
+# PROFILE
+# ==========================================
+@login_required(login_url="/login/")
+def profile(request):
+
+    role = "Admin" if request.user.is_superuser else "User"
+
+    return render(
+        request,
+        "calculator/profile.html",
+        {
+            "user": request.user,
+            "role": role,
+        }
+    )
+
+
+# ==========================================
+# EDIT PROFILE
+# ==========================================
+@login_required(login_url="/login/")
+def edit_profile(request):
+
+    if request.method == "POST":
+        request.user.username = request.POST.get("username")
+        request.user.email = request.POST.get("email")
+        request.user.save()
+
+        messages.success(request, "Profile updated successfully.")
+        return redirect("/profile/")
+
+    return render(request, "calculator/edit_profile.html")
+
+
+# ==========================================
+# CHANGE PASSWORD
+# ==========================================
+@login_required(login_url="/login/")
+def change_password(request):
+
+    if request.method == "POST":
+
+        current = request.POST.get("current")
+        new = request.POST.get("new")
+        confirm = request.POST.get("confirm")
+
+        if not request.user.check_password(current):
+            messages.error(request, "Current password is incorrect.")
+            return redirect("/change-password/")
+
+        if new != confirm:
+            messages.error(request, "Passwords do not match.")
+            return redirect("/change-password/")
+
+        request.user.set_password(new)
+        request.user.save()
+        update_session_auth_hash(request, request.user)
+
+        messages.success(request, "Password changed successfully.")
+        return redirect("/profile/")
+
+    return render(request, "calculator/change_password.html")
+
+
+# ==========================================
+# ABOUT
+# ==========================================
+def about(request):
+    return render(request, "calculator/about.html")
+
+
+# ==========================================
+# REGISTER
+# ==========================================
+def register(request):
+
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Registration successful. Please login.")
+            return redirect("login")
+
+    else:
+        form = RegisterForm()
+
+    return render(
+        request,
+        "calculator/register.html",
+        {
+            "form": form
+        }
+    )

@@ -1,0 +1,189 @@
+{% extends "calculator/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="calculator-card">
+
+<h2>JCB Work Time Calculator</h2>
+
+<form method="POST">
+{% csrf_token %}
+
+<label>Date</label>
+<input type="date" id="workDate" name="date">
+
+<label>Operator Name</label>
+<input type="text" id="operator" name="operator" placeholder="Enter Operator Name">
+
+<label>Machine Number</label>
+<input type="text" id="machine" name="machine" placeholder="MH-00-XXXX">
+
+<label>Site Name</label>
+<input type="text" id="site" name="site" placeholder="Enter Site Name">
+
+<label>Start Time</label>
+<input type="time" id="start" name="start">
+
+<label>End Time</label>
+<input type="time" id="end" name="end">
+
+<label>Break 1 Start</label>
+<input type="time" id="break1start">
+
+<label>Break 1 End</label>
+<input type="time" id="break1end">
+
+<div id="extraBreaks"></div>
+
+<div class="btn-group-custom">
+
+    <button type="button" onclick="addBreak()">
+        + Add Break
+    </button>
+
+    <button type="button" onclick="calculateWork()">
+        Calculate
+    </button>
+
+    <button type="submit" onclick="return validateForm()">
+        Save Record
+    </button>
+
+</div>
+
+<p id="saveError" class="text-danger mt-3 text-center"></p>
+
+<input type="hidden" name="start_time" id="start_time">
+<input type="hidden" name="end_time" id="end_time">
+<input type="hidden" name="total_time" id="total_time">
+<input type="hidden" name="break_time" id="break_time">
+<input type="hidden" name="working_time" id="working_time">
+
+<div id="result"></div>
+
+</form>
+
+</div>
+<script>
+
+let breakCount = 1;
+
+function addBreak() {
+
+    breakCount++;
+
+    let html = `
+        <label>Break ${breakCount} Start</label><br>
+        <input type="time" id="break${breakCount}start"><br><br>
+
+        <label>Break ${breakCount} End</label><br>
+        <input type="time" id="break${breakCount}end"><br><br>
+    `;
+
+    document.getElementById("extraBreaks").innerHTML += html;
+}
+
+function calculateWork() {
+
+    let workDate = document.getElementById("workDate").value;
+    let operator = document.getElementById("operator").value;
+    let machine = document.getElementById("machine").value;
+    let site = document.getElementById("site").value;
+
+    let start = document.getElementById("start").value;
+    let end = document.getElementById("end").value;
+
+    if (start == "" || end == "") {
+        alert("Please enter Start Time and End Time");
+        return;
+    }
+
+    let startTime = new Date("2000-01-01 " + start);
+    let endTime = new Date("2000-01-01 " + end);
+
+    let totalMinutes = (endTime - startTime) / 1000 / 60;
+
+    let breakMinutes = 0;
+
+    // Break 1
+    let b1s = document.getElementById("break1start").value;
+    let b1e = document.getElementById("break1end").value;
+
+    if (b1s != "" && b1e != "") {
+        let bs = new Date("2000-01-01 " + b1s);
+        let be = new Date("2000-01-01 " + b1e);
+        breakMinutes += (be - bs) / 1000 / 60;
+    }
+
+    // Extra Breaks
+    for (let i = 2; i <= breakCount; i++) {
+
+        let bs = document.getElementById(`break${i}start`);
+        let be = document.getElementById(`break${i}end`);
+
+        if (bs && be && bs.value != "" && be.value != "") {
+
+            let s = new Date("2000-01-01 " + bs.value);
+            let e = new Date("2000-01-01 " + be.value);
+
+            breakMinutes += (e - s) / 1000 / 60;
+        }
+    }
+
+    let workingMinutes = totalMinutes - breakMinutes;
+
+    let totalHours = Math.floor(totalMinutes / 60);
+    let totalMins = totalMinutes % 60;
+
+    let breakHours = Math.floor(breakMinutes / 60);
+    let breakMins = breakMinutes % 60;
+
+    let workHours = Math.floor(workingMinutes / 60);
+    let workMins = workingMinutes % 60;
+
+    // Hidden fields
+    document.getElementById("start_time").value = start;
+    document.getElementById("end_time").value = end;
+    document.getElementById("total_time").value = `${totalHours} Hours ${totalMins} Minutes`;
+    document.getElementById("break_time").value = `${breakHours} Hours ${breakMins} Minutes`;
+    document.getElementById("working_time").value = `${workHours} Hours ${workMins} Minutes`;
+
+    // Result
+    document.getElementById("result").innerHTML = `
+        <h3>Result</h3>
+        <p><b>Date:</b> ${workDate}</p>
+        <p><b>Operator:</b> ${operator}</p>
+        <p><b>Machine:</b> ${machine}</p>
+        <p><b>Site:</b> ${site}</p>
+
+        <p><b>Total Time:</b> ${totalHours} Hours ${totalMins} Minutes</p>
+        <p><b>Break Time:</b> ${breakHours} Hours ${breakMins} Minutes</p>
+        <p><b>Working Time:</b> ${workHours} Hours ${workMins} Minutes</p>
+    `;
+    document.getElementById("result").style.display = "block";
+}
+function validateForm() {
+
+    document.getElementById("saveError").innerHTML = "";
+
+    if (
+        document.getElementById("workDate").value == "" ||
+        document.getElementById("operator").value == "" ||
+        document.getElementById("machine").value == "" ||
+        document.getElementById("site").value == "" ||
+        document.getElementById("start").value == "" ||
+        document.getElementById("end").value == ""
+    ) {
+        document.getElementById("saveError").innerHTML =
+            "⚠ No Record Found. Please fill all required fields.";
+
+        return false;
+    }
+
+    return true;
+}
+
+</script>
+
+{% endblock %}

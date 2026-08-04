@@ -1,0 +1,112 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Record</title>
+
+    <style>
+        body{
+            font-family:Arial;
+            background:#f5f5f5;
+        }
+
+        .container{
+            width:500px;
+            margin:30px auto;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 0 10px gray;
+        }
+
+        h2{
+            text-align:center;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-top:5px;
+            margin-bottom:15px;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            background:#198754;
+            color:white;
+            border:none;
+            border-radius:5px;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#146c43;
+        }
+
+        a{
+            text-decoration:none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>✏ Edit Record</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Date</label>
+<input type="date" name="date" value="{{ record.date|date:'Y-m-d' }}">
+
+<label>Operator</label>
+<input type="text" name="operator" value="{{ record.operator }}">
+
+<label>Machine</label>
+<input type="text" name="machine" value="{{ record.machine }}">
+
+<label>Site</label>
+<input type="text" name="site" value="{{ record.site }}">
+
+<label>Start Time</label>
+<input type="time" name="start_time" value="{{ record.start_time|time:'H:i' }}">
+
+<label>End Time</label>
+<input type="time" name="end_time" value="{{ record.end_time|time:'H:i' }}">
+
+<label>Total Time</label>
+<input type="text" name="total_time" value="{{ record.total_time }}">
+
+<label>Break Time</label>
+<input type="text" name="break_time" value="{{ record.break_time }}">
+
+<label>Working Time</label>
+<input type="text" name="working_time" value="{{ record.working_time }}">
+
+<button type="submit">
+💾 Update Record
+</button>
+
+<br><br>
+
+<a href="/history/">
+    <button type="button">
+        ⬅ Back
+    </button>
+</a>
+
+</form>
+
+</div>
+
+</body>
+</html>
+{% endblock %}
