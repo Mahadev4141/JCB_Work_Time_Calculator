@@ -2,76 +2,71 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="card shadow">
 
-    <div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <h3>👤 My Profile</h3>
+    </div>
 
-        <div class="card-header bg-success text-white">
-            <h3>👤 My Profile</h3>
-        </div>
+    <div class="card-body text-center">
 
-        <div class="card-body text-center">
+        {% if profile.profile_photo %}
+
+            <img src="{{ profile.profile_photo.url }}"
+                 width="150"
+                 height="150"
+                 class="rounded-circle mb-3 shadow">
+
+        {% else %}
 
             <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=198754&color=fff&size=150"
                  class="rounded-circle mb-3">
 
-            <h3>{{ user.username }}</h3>
+        {% endif %}
 
-            <p class="text-muted">{{ user.email }}</p>
+        <h3>{{ user.username }}</h3>
 
-            <hr>
+        <p class="text-muted">{{ user.email }}</p>
 
-            <div class="row">
+        <hr>
 
-                <div class="col-md-6">
+        <div class="row">
 
-                    <h5>Username</h5>
-
-                    <p>{{ user.username }}</p>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <h5>Role</h5>
-
-                    <p>{{ role }}</p>
-
-                </div>
-
+            <div class="col-md-6">
+                <h5>Username</h5>
+                <p>{{ user.username }}</p>
             </div>
 
-            <div class="row mt-3">
-
-                <div class="col-md-6">
-
-                    <h5>Date Joined</h5>
-
-                    <p>{{ user.date_joined|date:"d M Y" }}</p>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <h5>Last Login</h5>
-
-                    <p>{{ user.last_login|date:"d M Y H:i" }}</p>
-
-                </div>
-
+            <div class="col-md-6">
+                <h5>Role</h5>
+                <p>{{ role }}</p>
             </div>
-
-            <hr>
-
-            <a href="/change-password/" class="btn btn-warning">
-                🔑 Change Password
-            </a>
-
-            <a href="/edit-profile/" class="btn btn-success">
-               ✏️ Edit Profile
-            </a>
 
         </div>
+
+        <div class="row mt-3">
+
+            <div class="col-md-6">
+                <h5>Date Joined</h5>
+                <p>{{ user.date_joined|date:"d M Y" }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <h5>Last Login</h5>
+                <p>{{ user.last_login|date:"d M Y H:i" }}</p>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <a href="/change-password/" class="btn btn-warning">
+            🔑 Change Password
+        </a>
+
+        <a href="/edit-profile/" class="btn btn-success">
+            ✏️ Edit Profile
+        </a>
 
     </div>
 

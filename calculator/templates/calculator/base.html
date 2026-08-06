@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,13 +17,13 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body>
-
+<body id="body">
 <div class="sidebar" id="sidebar">
 
     <div class="logo">
-        <h2>🚜 JCB</h2>
-        <p>Work Time Calculator</p>
+        <h4 style="margin-left:15px;">
+    {% trans "JCB Work Time Calculator" %}
+</h4>
     </div>
 
     <ul class="menu">
@@ -30,28 +31,28 @@
         <li>
             <a href="/dashboard/">
                 <i class="fa-solid fa-gauge"></i>
-                <span>Dashboard</span>
+                <span>{% trans "Dashboard" %}</span>
             </a>
         </li>
 
         <li>
             <a href="/">
                 <i class="fa-solid fa-calculator"></i>
-                <span>Calculator</span>
+                <span>{% trans "Calculator" %}</span>
             </a>
         </li>
 
         <li>
             <a href="/history/">
                 <i class="fa-solid fa-clock-rotate-left"></i>
-                <span>History</span>
+                <span>{% trans "History" %}</span>
             </a>
         </li>
 
         <li>
             <a href="/about/">
                 <i class="fa-solid fa-circle-info"></i>
-                <span>About</span>
+                <span>{% trans "About" %}</span>
             </a>
         </li>
 
@@ -60,14 +61,14 @@
         <li>
             <a href="/profile/">
                 <i class="fa-solid fa-user"></i>
-                <span>My Profile</span>
+                <span>{% trans "My Profile" %}</span>
             </a>
         </li>
 
         <li>
             <a href="/change-password/">
                 <i class="fa-solid fa-key"></i>
-                <span>Change Password</span>
+                <span>{% trans "Change Password" %}</span>
             </a>
         </li>
 
@@ -75,17 +76,34 @@
         <li>
             <a href="/users/">
                 <i class="fa-solid fa-users"></i>
-                <span>Users</span>
+                <span>{% trans "Users" %}</span>
             </a>
         </li>
         {% endif %}
 
         <hr>
+<li>
 
+    <form action="/i18n/setlang/" method="post">
+        {% csrf_token %}
+
+        <select name="language" onchange="this.form.submit()">
+        <option value="en" {% if LANGUAGE_CODE == "en" %}selected{% endif %}>
+        🇬🇧 English
+     </option>
+
+        <option value="mr" {% if LANGUAGE_CODE == "mr" %}selected{% endif %}>
+        🇮🇳 मराठी
+         </option>
+     </select>
+
+    </form>
+
+</li>
         <li>
             <a href="/logout/">
                 <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
+                <span>{% trans "Logout" %}</span>
             </a>
         </li>
 
@@ -101,6 +119,10 @@
 
         <button id="menu-btn" class="btn btn-success">
             <i class="fa-solid fa-bars"></i>
+        </button>
+        <button id="themeBtn"
+        class="btn btn-dark ms-2">
+            🌙
         </button>
 
         <h4 style="margin-left:15px;">
@@ -161,19 +183,62 @@ links.forEach(link => {
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    {% for message in messages %}
-    Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "{{ message }}",
-        confirmButtonColor: "#198754"
-    }).then(() => {
-        window.location.href = "/";
-    });
-    {% endfor %}
+{% for message in messages %}
+Swal.fire({
+    icon: "success",
+    title: "Success",
+    text: "{{ message }}",
+    confirmButtonColor: "#198754"
+});
+{% endfor %}
 
 });
 </script>
 {% endif %}
+
+<script>
+const body = document.body;
+const themeBtn = document.getElementById("themeBtn");
+
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+    body.classList.add("dark-mode");
+    themeBtn.innerHTML = "☀️";
+} else {
+    themeBtn.innerHTML = "🌙";
+}
+
+// Toggle theme
+themeBtn.addEventListener("click", function () {
+
+    body.classList.toggle("dark-mode");
+
+    if (body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+        themeBtn.innerHTML = "☀️";
+    } else {
+        localStorage.setItem("theme", "light");
+        themeBtn.innerHTML = "🌙";
+    }
+
+});
+</script>
+<footer class="footer">
+
+    <hr>
+
+    <p>© 2026 JCB Work Time Calculator</p>
+
+    <p>Version 1.0</p>
+
+    <p>
+        Developed by <b>Mahadev</b>
+    </p>
+
+    <p>
+        Powered by Django & Python
+    </p>
+
+</footer>
 </body>
 </html>

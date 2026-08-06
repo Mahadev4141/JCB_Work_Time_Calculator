@@ -12,7 +12,7 @@
 
         <div class="card-body">
 
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
 
                 {% csrf_token %}
 
@@ -38,6 +38,14 @@
                            value="{{ request.user.email }}"
                            required>
 
+                </div>
+                <div class="mb-3">
+                    <label>Profile Photo</label>
+
+                    <input
+                           type="file"
+                           name="photo"
+                           class="form-control">
                 </div>
 
                 <button class="btn btn-success">

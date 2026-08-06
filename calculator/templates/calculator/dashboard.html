@@ -1,125 +1,40 @@
 {% extends "calculator/base.html" %}
-
 {% block content %}
 
 <div class="container-fluid">
 
-    <!-- ===================================== -->
-<!-- Dashboard Header -->
-<!-- ===================================== -->
+    <!-- Welcome Card -->
+    <div class="card shadow-lg border-0 rounded-4 mb-4">
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="card-body">
 
-    <div>
+            <div class="row align-items-center">
 
-        <h2 class="fw-bold text-success mb-1">
-            🚜 JCB Work Time Dashboard
-        </h2>
+                <div class="col-md-8">
 
-        <p class="text-muted mb-0">
-            Welcome Back,
-            <strong>{{ request.user.username }}</strong>
-        </p>
+                    <h2 class="fw-bold text-success">
+                        🚜 JCB Work Time Dashboard
+                    </h2>
 
-    </div>
+                    <h5 class="mt-2">
+                        Welcome,
+                        <span class="text-primary">
+                            {{ request.user.username }}
+                        </span>
+                        👋
+                    </h5>
 
-</div>
+                    <p class="text-muted mb-0">
+                        Monitor work records, operators and machines from one professional dashboard.
+                    </p>
 
+                </div>
 
-<!-- ===================================== -->
-<!-- Live Status -->
-<!-- ===================================== -->
+                <div class="col-md-4 text-end">
 
-<div class="card shadow-sm border-0 rounded-4 mb-4">
-
-    <div class="card-body py-3">
-
-        <div class="row text-center align-items-center">
-
-            <div class="col-md-3">
-
-                <span class="badge bg-success fs-6 px-3 py-2">
-
-                    🟢 System Online
-
-                </span>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <small class="text-muted">
-
-                    Current Time
-
-                </small>
-
-                <h5 id="clock" class="fw-bold text-success mb-0"></h5>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <small class="text-muted">
-
-                    Today's Date
-
-                </small>
-
-                <h6 id="todayDate" class="mb-0"></h6>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <small class="text-muted">
-
-                    Logged User
-
-                </small>
-
-                <h6 class="text-primary mb-0">
-
-                    {{ request.user.username }}
-
-                </h6>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-<!-- ===================================== -->
-<!-- Statistics Cards -->
-<!-- ===================================== -->
-
-<div class="row g-4">
-
-    <div class="col-lg-3 col-md-6">
-
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">
-                            Total Records
-                        </small>
-
-                        <h2 class="fw-bold text-success mt-2">
-                            {{ total_records }}
-                        </h2>
-
-                    </div>
-
-                    <div style="font-size:50px;">
-                        📄
-                    </div>
+                    <span class="badge bg-success fs-6 px-4 py-2">
+                        🟢 SYSTEM ONLINE
+                    </span>
 
                 </div>
 
@@ -129,29 +44,48 @@
 
     </div>
 
-    <div class="col-lg-3 col-md-6">
 
-        <div class="card border-0 shadow-sm rounded-4 h-100">
+    <!-- Status Card -->
 
-            <div class="card-body">
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
 
-                <div class="d-flex justify-content-between align-items-center">
+        <div class="card-body">
 
-                    <div>
+            <div class="row text-center">
 
-                        <small class="text-muted">
-                            Operators
-                        </small>
+                <div class="col-md-4">
 
-                        <h2 class="fw-bold text-primary mt-2">
-                            {{ total_operators }}
-                        </h2>
+                    <small class="text-muted">
+                        Current Time
+                    </small>
 
-                    </div>
+                    <h4 id="clock"
+                        class="fw-bold text-success">
+                    </h4>
 
-                    <div style="font-size:50px;">
-                        👷
-                    </div>
+                </div>
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Today's Date
+                    </small>
+
+                    <h4 id="todayDate"
+                        class="fw-bold">
+                    </h4>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Logged User
+                    </small>
+
+                    <h4 class="text-primary fw-bold">
+                        {{ request.user.username }}
+                    </h4>
 
                 </div>
 
@@ -161,28 +95,131 @@
 
     </div>
 
-    <div class="col-lg-3 col-md-6">
 
-        <div class="card border-0 shadow-sm rounded-4 h-100">
+    <!-- Statistics Cards -->
 
-            <div class="card-body">
+    <div class="row g-4 mb-4">
 
-                <div class="d-flex justify-content-between align-items-center">
+        <div class="col-lg-3 col-md-6">
 
-                    <div>
+            <div class="card border-0 shadow rounded-4 h-100">
 
-                        <small class="text-muted">
-                            Machines
-                        </small>
+                <div class="card-body">
 
-                        <h2 class="fw-bold text-warning mt-2">
-                            {{ total_machines }}
-                        </h2>
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Total Records
+                            </small>
+
+                            <h2 class="fw-bold text-success mt-2">
+                                {{ total_records }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:55px;">
+                            📄
+                        </div>
 
                     </div>
 
-                    <div style="font-size:50px;">
-                        🚜
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Operators
+                            </small>
+
+                            <h2 class="fw-bold text-primary mt-2">
+                                {{ total_operators }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:55px;">
+                            👷
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Machines
+                            </small>
+
+                            <h2 class="fw-bold text-warning mt-2">
+                                {{ total_machines }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:55px;">
+                            🚜
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow rounded-4 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Today's Records
+                            </small>
+
+                            <h2 class="fw-bold text-danger mt-2">
+                                {{ today_records }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:55px;">
+                            📅
+                        </div>
+
                     </div>
 
                 </div>
@@ -192,43 +229,9 @@
         </div>
 
     </div>
+       <!-- Quick Actions -->
 
-    <div class="col-lg-3 col-md-6">
-
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">
-                            Today's Records
-                        </small>
-
-                        <h2 class="fw-bold text-danger mt-2">
-                            {{ today_records }}
-                        </h2>
-
-                    </div>
-
-                    <div style="font-size:50px;">
-                        📅
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-    <!-- Quick Actions -->
-
-    <div class="card shadow-lg mt-5 border-0">
+    <div class="card shadow-lg border-0 rounded-4 mb-4">
 
         <div class="card-header bg-success text-white">
 
@@ -242,10 +245,10 @@
 
             <div class="row g-3">
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
 
                     <a href="/"
-                       class="btn btn-success w-100">
+                       class="btn btn-success w-100 py-3 rounded-3">
 
                         ➕ New Record
 
@@ -253,10 +256,10 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
 
                     <a href="/history/"
-                       class="btn btn-primary w-100">
+                       class="btn btn-primary w-100 py-3 rounded-3">
 
                         📜 History
 
@@ -264,10 +267,10 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
 
                     <a href="/export/pdf/"
-                       class="btn btn-danger w-100">
+                       class="btn btn-danger w-100 py-3 rounded-3">
 
                         📄 Export PDF
 
@@ -275,10 +278,10 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
 
                     <a href="/export/excel/"
-                       class="btn btn-warning w-100">
+                       class="btn btn-warning w-100 py-3 rounded-3">
 
                         📊 Export Excel
 
@@ -292,21 +295,106 @@
 
     </div>
 
-    <div class="row mt-4">
 
-    <div class="col-lg-6">
-        <!-- Chart Card -->
+    <!-- Charts -->
+
+    <div class="row">
+
+        <div class="col-lg-8 mb-4">
+
+            <div class="card shadow-lg border-0 rounded-4">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+                        📊 Operator Records Chart
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="recordsChart"
+                            height="110">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4 mb-4">
+
+            <div class="card shadow-lg border-0 rounded-4">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+                        📈 Statistics
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+
+                            <td>Total Records</td>
+
+                            <td class="fw-bold text-success">
+                                {{ total_records }}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Operators</td>
+
+                            <td class="fw-bold text-primary">
+                                {{ total_operators }}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Machines</td>
+
+                            <td class="fw-bold text-warning">
+                                {{ total_machines }}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Today's Records</td>
+
+                            <td class="fw-bold text-danger">
+                                {{ today_records }}
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="col-lg-6">
-        <!-- Latest Records Card -->
-    </div>
+    <!-- Latest Records -->
 
-</div>
+    <div class="card shadow-lg border-0 rounded-4 mb-4">
 
-    <div class="card shadow-lg mt-5 border-0">
-
-        <div class="card-header bg-success text-white">
+        <div class="card-header bg-dark text-white">
 
             <h4 class="mb-0">
                 🕒 Latest Records
@@ -318,7 +406,7 @@
 
             <div class="table-responsive">
 
-                <table class="table table-striped table-hover align-middle">
+                <table class="table table-hover align-middle">
 
                     <thead class="table-success">
 
@@ -348,7 +436,11 @@
 
                             <td>{{ record.machine }}</td>
 
-                            <td>{{ record.working_time }}</td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ record.working_time }}
+                                </span>
+                            </td>
 
                         </tr>
 
@@ -356,8 +448,7 @@
 
                         <tr>
 
-                            <td colspan="5"
-                                class="text-center">
+                            <td colspan="5" class="text-center text-muted">
 
                                 No Records Found
 
@@ -376,162 +467,84 @@
         </div>
 
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-const ctx = document.getElementById("operatorChart");
-
-new Chart(ctx, {
-
-    type: "bar",
-
-    data: {
-
-        labels: {{ labels|safe }},
-
-        datasets: [{
-
-            label: "Total Records",
-
-            data: {{ data|safe }},
-
-            borderWidth: 2,
-
-            borderRadius: 10,
-
-            backgroundColor: [
-
-                "#198754",
-                "#0d6efd",
-                "#ffc107",
-                "#dc3545",
-                "#20c997",
-                "#fd7e14",
-                "#6f42c1",
-                "#0dcaf0",
-                "#6610f2",
-                "#198754"
-
-            ]
-
-        }]
-
-    },
-
-    options: {
-
-        responsive: true,
-
-        maintainAspectRatio: false,
-
-        plugins: {
-
-            legend: {
-
-                display: false
-
-            }
-
-        },
-
-        scales: {
-
-            y: {
-
-                beginAtZero: true,
-
-                ticks: {
-
-                    stepSize: 1
-
-                }
-
-            }
-
-        }
-
-    }
-
-});
-
-</script>
-
-<style>
-
-.card{
-
-    border-radius:18px;
-    transition:.3s;
-
-}
-
-.card:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
-
-}
-
-.table{
-
-    margin-bottom:0;
-
-}
-
-.table th{
-
-    text-align:center;
-
-}
-
-.table td{
-
-    text-align:center;
-
-    vertical-align:middle;
-
-}
-
-.btn{
-
-    border-radius:10px;
-
-    font-weight:bold;
-
-}
-
-canvas{
-
-    height:350px !important;
-
-}
-
-</style>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 
+const ctx = document.getElementById("recordsChart");
+
+if(ctx){
+
+new Chart(ctx,{
+
+type:"bar",
+
+data:{
+
+labels:{{ labels|safe }},
+
+datasets:[{
+
+label:"Records",
+
+data:{{ data|safe }},
+
+backgroundColor:[
+"#198754",
+"#0d6efd",
+"#ffc107",
+"#dc3545",
+"#20c997",
+"#6610f2",
+"#fd7e14"
+],
+
+borderRadius:10
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{
+display:false
+}
+
+},
+
+scales:{
+
+y:{
+
+beginAtZero:true
+
+}
+
+}
+
+}
+
+});
+
+}
+
 function updateClock(){
 
-    const now = new Date();
+const now = new Date();
 
-    document.getElementById("clock").innerHTML =
-        now.toLocaleTimeString();
+document.getElementById("clock").innerHTML =
+now.toLocaleTimeString();
 
-    document.getElementById("todayDate").innerHTML =
-        now.toLocaleDateString(
-            "en-IN",
-            {
-                weekday:"long",
-                day:"numeric",
-                month:"long",
-                year:"numeric"
-            }
-        );
+document.getElementById("todayDate").innerHTML =
+now.toLocaleDateString();
 
 }
 
@@ -540,4 +553,5 @@ updateClock();
 setInterval(updateClock,1000);
 
 </script>
+
 {% endblock %}

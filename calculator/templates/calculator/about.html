@@ -1,46 +1,217 @@
 {% extends "calculator/base.html" %}
-
-{% block title %}About{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h2>About This Project</h2>
-        </div>
-        <div class="card-body">
-            <h4>Work Record Management System</h4>
-            <p>
-                This Django application helps users manage daily work records,
-                view history, generate PDF and Excel reports, and securely
-                manage their accounts.
-            </p>
 
-            <h5>Features</h5>
-            <ul>
-                <li>User Login & Logout</li>
-                <li>Add, Edit and Delete Work Records</li>
-                <li>Search Work History</li>
-                <li>Export Reports to PDF & Excel</li>
-                <li>Password Change</li>
-                <li>Responsive Bootstrap Interface</li>
-            </ul>
+<style>
 
-            <h5>Technology Stack</h5>
-            <ul>
-                <li>Python</li>
-                <li>Django</li>
-                <li>Bootstrap</li>
-                <li>SQLite</li>
-            </ul>
+.about-container{
+    max-width:950px;
+    margin:40px auto;
+    background:#fff;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
 
-            <hr>
+.profile{
+    text-align:center;
+    margin-bottom:30px;
+}
 
-            <p class="text-muted">
-                Version 1.0<br>
-                Developed using Django Framework.
-            </p>
-        </div>
-    </div>
+.profile img{
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    border:5px solid #198754;
+    object-fit:cover;
+}
+
+.profile h1{
+    color:#198754;
+    margin-top:20px;
+}
+
+.profile p{
+    color:#666;
+    font-size:18px;
+}
+
+.section-title{
+    color:#198754;
+    margin-top:35px;
+    margin-bottom:15px;
+    border-left:5px solid #198754;
+    padding-left:10px;
+}
+
+.info-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.info-table td{
+    padding:12px;
+    border:1px solid #ddd;
+}
+
+.info-table tr:nth-child(even){
+    background:#f8f8f8;
+}
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.feature-box{
+    background:#198754;
+    color:white;
+    padding:12px;
+    border-radius:10px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:40px;
+    color:gray;
+}
+
+/* Dark Mode */
+
+body.dark-mode .about-container{
+    background:#1f1f1f;
+    color:white;
+}
+
+body.dark-mode .info-table td{
+    border-color:#555;
+}
+
+body.dark-mode .info-table tr:nth-child(even){
+    background:#2a2a2a;
+}
+
+body.dark-mode .profile p{
+    color:#ccc;
+}
+
+body.dark-mode .footer{
+    color:#bbb;
+}
+
+</style>
+
+<div class="about-container">
+
+<div class="profile">
+
+<img src="{% static 'images/developer.jpg' %}" alt="Developer">
+
+<h1>JCB Work Time Calculator</h1>
+
+<p>Professional Work Time Management System</p>
+
 </div>
+
+<h2 class="section-title">📖 Project Description</h2>
+
+<p>
+
+JCB Work Time Calculator is a professional web application developed using
+Django Framework. It helps users calculate working hours, manage work
+records, generate PDF & Excel reports and monitor daily activities.
+
+</p>
+
+<h2 class="section-title">✨ Features</h2>
+
+<div class="features">
+
+<div class="feature-box">✅ Login System</div>
+<div class="feature-box">✅ Dashboard</div>
+<div class="feature-box">✅ Work Calculator</div>
+<div class="feature-box">✅ History</div>
+<div class="feature-box">✅ PDF Report</div>
+<div class="feature-box">✅ Excel Export</div>
+<div class="feature-box">✅ Profile</div>
+<div class="feature-box">✅ Dark Mode</div>
+<div class="feature-box">✅ User Management</div>
+<div class="feature-box">✅ Responsive UI</div>
+
+</div>
+
+<h2 class="section-title">🛠 Technologies Used</h2>
+
+<table class="info-table">
+
+<tr>
+<td><b>Backend</b></td>
+<td>Django (Python)</td>
+</tr>
+
+<tr>
+<td><b>Frontend</b></td>
+<td>HTML, CSS, Bootstrap, JavaScript</td>
+</tr>
+
+<tr>
+<td><b>Database</b></td>
+<td>SQLite</td>
+</tr>
+
+<tr>
+<td><b>Reports</b></td>
+<td>PDF & Excel</td>
+</tr>
+
+</table>
+
+<h2 class="section-title">👨‍💻 Developer Information</h2>
+
+<table class="info-table">
+
+<tr>
+<td><b>Developer</b></td>
+<td>Mahadev Jalkote</td>
+<td>Omkar zambare</td>
+</tr>
+
+<tr>
+<td><b>Email</b></td>
+<td>mahadevsb4141@gmail.com</td>
+<td>omkarzamabre0@gmail.com</td>
+</tr>
+
+<tr>
+<td><b>College</b></td>
+<td>D.H.B Soni collge Solapur</td>
+</tr>
+
+<tr>
+<td><b>Version</b></td>
+<td>1.0</td>
+</tr>
+
+<tr>
+<td><b>Year</b></td>
+<td>2026</td>
+</tr>
+</table>
+
+<div class="footer">
+
+<hr>
+
+<h4>© 2026 JCB Work Time Calculator</h4>
+
+<p>Developed by Mahadev</p>
+
+<p>Version 1.0</p>
+
+</div>
+
+</div>
+
 {% endblock %}
