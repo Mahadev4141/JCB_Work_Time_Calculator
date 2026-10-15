@@ -10,9 +10,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = "django-insecure-7h+br)#3wm@4!!q*=1r&(f1h=ydh3sbc4!jv!6a(4*w8y=wf"
 
-DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = False
+
+ALLOWED_HOSTS = [
+    "jcb-work-time-calculator.onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://jcb-work-time-calculator.onrender.com",
+]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Applications
 
